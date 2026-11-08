@@ -218,9 +218,16 @@ export interface PageFees {
     cancellationPrice: number | null;
 }
 
-export function extractVisibleTextFromHtml(html: string): string {
+/**
+ * Convertit un HTML en texte ligne par ligne. Par défaut, le contenu masqué est
+ * retiré ; `includeHidden` le conserve pour lire les modales (mentions légales…)
+ * qui ne sont pas affichées au chargement mais restent présentes dans le DOM.
+ */
+export function extractVisibleTextFromHtml(html: string, options: { includeHidden?: boolean } = {}): string {
     const $ = load(html);
-    $('script, style, noscript, template, [hidden], [aria-hidden="true"], [style*="display:none"], [style*="display: none"]').remove();
+    $(options.includeHidden
+        ? 'script, style, noscript, template'
+        : 'script, style, noscript, template, [hidden], [aria-hidden="true"], [style*="display:none"], [style*="display: none"]').remove();
     $('br').replaceWith('\n');
     $('h1, h2, h3, h4, h5, h6, p, li, article, section, button, a, label, td, th').each((_, element) => {
         $(element).prepend('\n').append('\n');

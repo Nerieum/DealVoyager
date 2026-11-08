@@ -1,49 +1,133 @@
 <script setup lang="ts">
-import DarkModeSwitch from '../components/DarkModeSwitch.vue'
+import { computed } from "vue";
+import DarkModeSwitch from "../components/DarkModeSwitch.vue";
+import HeroSection from "../components/HeroSection.vue";
+
+const route = useRoute();
+const isHome = computed(() => route.path === "/");
 </script>
 
 <template>
-  <div class="min-h-screen bg-background text-foreground flex flex-col transition-colors duration-300">
-    <DarkModeSwitch />
-
-    <!-- Beta notice -->
-    <aside
-      class="relative z-40 border-b-4 border-border bg-secondary px-4 py-3 pr-20 text-secondary-foreground"
-      aria-label="Information sur la version bêta"
+  <div class="poster-site">
+    <div class="poster-background-art" aria-hidden="true">
+      <svg
+        class="poster-margin-mark poster-margin-star"
+        viewBox="0 0 100 140"
+        fill="none"
+      >
+        <path
+          d="m49 8 8 28 25-16-12 29 26 9-28 8 13 28-26-15-9 29-7-29-26 13 13-27L2 54l29-6-10-27 22 15Z"
+          fill="var(--poster-pink)"
+          stroke="var(--poster-line)"
+          stroke-width="2"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M17 125c19-13 41-12 65-5M23 134c18-8 35-8 53-5"
+          stroke="var(--poster-violet)"
+          stroke-width="3"
+          stroke-linecap="round"
+        />
+      </svg>
+      <svg
+        class="poster-margin-mark poster-margin-loop"
+        viewBox="0 0 100 180"
+        fill="none"
+      >
+        <path
+          d="M20 10c60 25 69 60 39 75C19 106 1 49 33 38c31-10 58 56 42 84-14 25-42 12-28-4 10-11 40 12 34 46"
+          stroke="var(--poster-doodle)"
+          stroke-width="4"
+          stroke-linecap="round"
+        />
+        <path
+          d="m9 141 10 4m-6-22 8 8m12 19-2 10"
+          stroke="var(--poster-line)"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+      </svg>
+      <svg
+        class="poster-margin-mark poster-margin-sun"
+        viewBox="0 0 100 100"
+        fill="none"
+      >
+        <circle
+          cx="50"
+          cy="50"
+          r="23"
+          fill="var(--poster-yellow)"
+          stroke="var(--poster-line)"
+          stroke-width="2"
+        />
+        <path
+          d="m50 6 1 13m30 0-9 10M94 50H81m0 31-10-9M50 94V81M19 81l10-10M6 50h13m0-31 10 10"
+          stroke="var(--poster-line)"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+      </svg>
+    </div>
+    <a href="#page-content" class="poster-skip-link">Aller au contenu</a>
+    <header
+      class="poster-masthead poster-shell"
+      :class="{ 'poster-masthead-home': isHome }"
     >
-      <p class="mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-sm font-bold md:text-base">
-        <span class="border-2 border-border bg-foreground px-2 py-0.5 text-xs font-black uppercase tracking-widest text-background shadow-neo-hover">
-          Bêta
-        </span>
-        <span>Deal Voyager est encore en bêta. Un souci ou une anomalie ?</span>
-        <a
-          href="https://x.com/doalou"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="font-black underline decoration-2 underline-offset-2 hover:no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+      <div class="poster-masthead-bar">
+        <NuxtLink
+          to="/"
+          class="poster-wordmark"
+          aria-label="Deal Voyager, accueil"
         >
-          Signalez-le-moi en DM sur X (@doalou)
-        </a>
-      </p>
-    </aside>
+          <span class="poster-brand-symbol"
+            ><svg viewBox="0 0 40 40" fill="none" aria-hidden="true">
+              <path
+                d="M8 30V23m8 7V17m8 13V11m8 19V5"
+                stroke="currentColor"
+                stroke-width="4"
+              /></svg
+          ></span>
+          <span
+            >DEAL<span
+              >VOYAGER<span class="poster-brand-period">.</span></span
+            ></span
+          >
+        </NuxtLink>
+        <nav class="poster-navigation" aria-label="Navigation principale">
+          <NuxtLink to="/#comparer">Comparer</NuxtLink
+          ><NuxtLink to="/#methode">La méthode</NuxtLink
+          ><NuxtLink to="/#discord">Discord</NuxtLink>
+        </nav>
+        <div class="poster-header-aside">
+          <DarkModeSwitch inline />
+        </div>
+      </div>
+      <HeroSection v-if="isHome" />
+    </header>
 
     <!-- Page Content -->
-    <main class="flex-1 w-full">
+    <main id="page-content" class="poster-page-content">
       <slot />
     </main>
 
-    <!-- Footer -->
-    <footer class="py-6 border-t-4 border-border bg-card text-card-foreground relative z-10">
-      <div class="container mx-auto px-4 flex flex-col items-center justify-center gap-4 text-center">
-        <p class="font-bold text-sm uppercase tracking-wider">
-          © {{ new Date().getFullYear() }} Deal-Voyager - Ton Forfait, Ton Choix.
-        </p>
-        <NuxtLink
-          to="/mentions-legales"
-          class="font-bold text-xs uppercase tracking-widest border-2 border-border px-3 py-1 shadow-neo hover:shadow-neo-hover hover:translate-x-[2px] hover:translate-y-[2px] bg-card text-card-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-100"
+    <footer class="poster-footer">
+      <div class="poster-shell">
+        <NuxtLink to="/" class="poster-footer-brand"
+          >DEAL VOYAGER<span>.</span></NuxtLink
         >
-          📜 Mentions Légales
-        </NuxtLink>
+        <nav class="poster-footer-links" aria-label="Informations du site">
+          <NuxtLink to="/mentions-legales">Mentions légales</NuxtLink>
+          <a
+            href="https://x.com/doalou"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Signaler un problème <span aria-hidden="true">↗</span></a
+          >
+        </nav>
+        <div class="poster-footer-meta">
+          <span>© {{ new Date().getFullYear() }} Deal Voyager · @doalou</span
+          ><span>Site en bêta</span>
+        </div>
       </div>
     </footer>
   </div>

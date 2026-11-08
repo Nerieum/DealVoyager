@@ -1,7 +1,93 @@
+import type { Page } from 'playwright';
 import type { ScraperConfig, ScrapedPlan } from './types';
-import { extractFeesFromText } from './utils';
+import { extractFeesFromText, extractVisibleTextFromHtml } from './utils';
+
+// En-têtes des mentions légales, ex. :
+//   « Série spéciale B&YOU 20Go 5G dont 20Go valables en Europe/DOM à 9,99€/mois »
+//   « Série spéciale B&You illimité 1Go (1€99/mois) »
+//   « B&YOU Spécial Voyage 200Go 5G dont 40Go valables dans + de 160 destinations à 15,99€/mois »
+const LEGAL_HEADER_PATTERN = /^(?:S[ée]rie\s+sp[ée]ciale\s+)?B&YOU\b/i;
+// Les packs streaming (Amazon, Deezer, beIN) sont conditionnés à un abonnement tiers.
+const EXCLUDED_HEADER_PATTERN = /\b(?:pack|fibre|box)\b/i;
+const MONTHLY_PRICE_PATTERN = /(\d{1,3})(?:[,.](\d{2}))?\s*€\s*(\d{2})?\s*\/\s*mois/gi;
+
+/**
+ * Lit la gamme B&You depuis les mentions légales de la page « sans engagement » :
+ * chaque forfait y a un en-tête (data, 4G/5G, data Europe, prix) suivi de ses frais.
+ */
+export function parseBAndYouText(rawText: string): ScrapedPlan[] {
+    const lines = rawText.replace(/\u00a0|\u202f/g, ' ').split('\n').map((line) => line.replace(/\s+/g, ' ').trim()).filter(Boolean);
+    const headers: Array<{ index: number; dataGb: number; price: number; generation: '4G' | '5G'; dataEuGb?: number }> = [];
+
+    lines.forEach((line, index) => {
+        if (line.length > 200 || !LEGAL_HEADER_PATTERN.test(line) || EXCLUDED_HEADER_PATTERN.test(line)) return;
+        const dataMatch = line.match(/(\d{1,4})\s*(Go|Mo)\b/i);
+        const priceMatch = [...line.matchAll(MONTHLY_PRICE_PATTERN)].at(-1);
+        if (!dataMatch || !priceMatch) return;
+        const rawData = Number.parseInt(dataMatch[1], 10);
+        const dataGb = dataMatch[2].toLowerCase() === 'mo' ? rawData / 1000 : rawData;
+        const price = Number.parseFloat(`${priceMatch[1]}.${priceMatch[2] ?? priceMatch[3] ?? '00'}`);
+        const euMatch = line.match(/dont\s+(\d{1,4})\s*Go/i);
+        headers.push({
+            index,
+            dataGb,
+            price,
+            generation: /\b5G\b/i.test(line) ? '5G' : '4G',
+            dataEuGb: euMatch ? Number.parseInt(euMatch[1], 10) : undefined,
+        });
+    });
+
+    const dataCounts = new Map<number, number>();
+    for (const header of headers) dataCounts.set(header.dataGb, (dataCounts.get(header.dataGb) ?? 0) + 1);
+
+    const plans = new Map<string, ScrapedPlan>();
+    headers.forEach((header, position) => {
+        const blockEnd = Math.min(headers[position + 1]?.index ?? lines.length, header.index + 12);
+        const block = lines.slice(header.index, blockEnd).join('\n');
+        const fees = extractFeesFromText(block);
+        const dataEuGb = header.dataEuGb
+            ?? (() => {
+                const match = block.match(/dont\s+(\d{1,4})\s*Go\s+utilisables?/i);
+                return match ? Number.parseInt(match[1], 10) : undefined;
+            })();
+        const dataLabel = header.dataGb >= 1 ? `${header.dataGb} Go` : `${header.dataGb * 1000} Mo`;
+        // Deux forfaits peuvent partager la même data (ex. 20 Go 4G et 20 Go 5G).
+        const planName = (dataCounts.get(header.dataGb) ?? 0) > 1
+            ? `Forfait B&You ${dataLabel} ${header.generation}`
+            : `Forfait B&You ${dataLabel}`;
+        if (plans.has(planName)) return;
+        plans.set(planName, {
+            operator: 'B&You',
+            planName,
+            dataGb: header.dataGb,
+            price: header.price,
+            calls: 'Illimités',
+            network: 'Bouygues Telecom',
+            networkGeneration: header.generation,
+            dataEuGb: dataEuGb != null && dataEuGb <= header.dataGb ? dataEuGb : undefined,
+            simPrice: fees.simPrice ?? undefined,
+            activationPrice: fees.activationPrice ?? undefined,
+            cancellationPrice: fees.cancellationPrice ?? undefined,
+        });
+    });
+
+    return [...plans.values()];
+}
+
+export const bAndYouHtmlScrapeLogic: NonNullable<ScraperConfig['htmlScrapeFunction']> = (html) =>
+    parseBAndYouText(extractVisibleTextFromHtml(html, { includeHidden: true }));
 
 export const bAndYouScrapeLogic: ScraperConfig['scrapeFunction'] = async (page) => {
+    try {
+        const plans = parseBAndYouText(extractVisibleTextFromHtml(await page.content(), { includeHidden: true }));
+        if (plans.length > 0) return plans;
+    } catch (error) {
+        console.warn('[B&You] Lecture des mentions légales impossible, repli sur les clics :', error);
+    }
+    return legacyBAndYouScrape(page);
+};
+
+async function legacyBAndYouScrape(page: Page): Promise<ScrapedPlan[]> {
     try {
         await new Promise(r => setTimeout(r, 5000));
 
@@ -260,4 +346,4 @@ export const bAndYouScrapeLogic: ScraperConfig['scrapeFunction'] = async (page) 
         console.error('Erreur dans la collecte B&You:', error);
         return [];
     }
-};
+}

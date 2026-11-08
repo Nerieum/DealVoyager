@@ -12,7 +12,7 @@ import type {
 } from './scrapers/types';
 import { soshScrapeLogic } from './scrapers/sosh.scraper';
 import { redScrapeLogic } from './scrapers/red.scraper';
-import { bAndYouScrapeLogic } from './scrapers/byou.scraper';
+import { bAndYouHtmlScrapeLogic, bAndYouScrapeLogic } from './scrapers/byou.scraper';
 import { freeMobileScrapeLogic } from './scrapers/free.scraper';
 import { youPriceScrapeLogic } from './scrapers/youprice.scraper';
 import { coriolisScrapeLogic } from './scrapers/coriolis.scraper';
@@ -32,6 +32,10 @@ import { detectFeesFromCheckout, extractCheckoutCandidateUrls, extractTariffPdfU
 import { broadcastDeal } from './discord.service';
 
 const DEFAULT_CONCURRENCY = 3;
+// Chaque page Chromium pèse plusieurs centaines de Mo : on limite le navigateur
+// plus strictement que le crawler HTTP pour rester sous CRAWLEE_MEMORY_MBYTES.
+const DEFAULT_BROWSER_CONCURRENCY = 2;
+const BROWSER_RETIRE_AFTER_PAGES = 6;
 const DEFAULT_REQUEST_TIMEOUT_SECS = 90;
 const DEFAULT_RETRIES = 2;
 const FORBIDDEN_OFFER_PATTERN = /\b(box|bleubox|bleufix|fibre|adsl|smartphone|t[ée]l[ée]phone inclus|engagement\s*(?:12|24)\s*mois)\b/i;
@@ -56,12 +60,14 @@ export const operatorDefinitions: readonly OperatorDefinition[] = [
   },
   {
     name: 'B&You',
-    url: 'https://www.bouyguestelecom.fr/forfaits-mobiles/b-and-you',
-    mode: 'browser',
+    // L'ancienne page /forfaits-mobiles/b-and-you renvoie 404 depuis la refonte.
+    url: 'https://www.bouyguestelecom.fr/forfaits-mobiles/sans-engagement',
+    mode: 'http',
     networks: ['Bouygues Telecom'],
     minOffers: 4,
     pdfUrl: 'https://www.bouyguestelecom.fr/static/cms/tarifs/Guide_Des_Tarifs.pdf',
     findPdfUrl: findTariffPdf,
+    htmlScrapeFunction: bAndYouHtmlScrapeLogic,
     scrapeFunction: bAndYouScrapeLogic,
   },
   {
@@ -191,7 +197,7 @@ export const operatorDefinitions: readonly OperatorDefinition[] = [
   {
     name: 'France Téléphone',
     legacyNames: ['France Telephone'],
-    url: 'https://france-telephone.com/forfaits-mobiles-bleutel-2/',
+    url: 'https://www.france-telephone.com/forfaits-mobiles',
     mode: 'http',
     networks: ['Orange', 'Bouygues Telecom'],
     minOffers: 8,
@@ -243,6 +249,10 @@ async function runScrape(): Promise<ScrapeRunSummary> {
     ? new ProxyConfiguration({ proxyUrls })
     : undefined;
   const maxConcurrency = readPositiveInteger(process.env.SCRAPER_MAX_CONCURRENCY, DEFAULT_CONCURRENCY);
+  const browserConcurrency = Math.min(
+    maxConcurrency,
+    readPositiveInteger(process.env.SCRAPER_BROWSER_MAX_CONCURRENCY, DEFAULT_BROWSER_CONCURRENCY),
+  );
   const requestTimeoutSecs = readPositiveInteger(process.env.SCRAPER_TIMEOUT_SECS, DEFAULT_REQUEST_TIMEOUT_SECS);
   const maxRequestRetries = readNonNegativeInteger(process.env.SCRAPER_MAX_RETRIES, DEFAULT_RETRIES);
   const headless = process.env.SCRAPER_HEADLESS !== 'false';
@@ -254,7 +264,7 @@ async function runScrape(): Promise<ScrapeRunSummary> {
     purgeOnStart: true,
   });
 
-  console.log(`[Crawlee] Démarrage de ${operatorDefinitions.length} opérateurs, concurrence ${maxConcurrency}.`);
+  console.log(`[Crawlee] Démarrage de ${operatorDefinitions.length} opérateurs, concurrence HTTP ${maxConcurrency}, navigateur ${browserConcurrency}.`);
 
   const completeOperator = async (
     definition: OperatorDefinition,
@@ -308,6 +318,7 @@ async function runScrape(): Promise<ScrapeRunSummary> {
           session?.retire();
           throw new Error(`BLOCKED_HTTP_${response.statusCode}`);
         }
+        throwIfPageGone(response.statusCode, request.loadedUrl ?? request.url);
         const html = typeof body === 'string' ? body : body.toString('utf8');
         if (isBlockedContent(html)) {
           session?.retire();
@@ -346,7 +357,7 @@ async function runScrape(): Promise<ScrapeRunSummary> {
   const browserDefinitions = operatorDefinitions.filter((definition) => !outcomeOperators.has(definition.name));
 
   const crawler = new PlaywrightCrawler({
-    maxConcurrency,
+    maxConcurrency: browserConcurrency,
     maxRequestRetries,
     requestHandlerTimeoutSecs: requestTimeoutSecs,
     navigationTimeoutSecs: Math.min(requestTimeoutSecs, 60),
@@ -368,6 +379,11 @@ async function runScrape(): Promise<ScrapeRunSummary> {
     },
     browserPoolOptions: {
       useFingerprints: true,
+      maxOpenPagesPerBrowser: browserConcurrency,
+      // Recycler Chromium régulièrement évite l'accumulation de mémoire
+      // (pages de checkout, PDF, scripts tiers) au fil des opérateurs.
+      retireBrowserAfterPageCount: BROWSER_RETIRE_AFTER_PAGES,
+      closeInactiveBrowserAfterSecs: 60,
     },
     preNavigationHooks: [async ({ page }, gotoOptions) => {
       gotoOptions.waitUntil = 'domcontentloaded';
@@ -384,6 +400,7 @@ async function runScrape(): Promise<ScrapeRunSummary> {
         session?.retire();
         throw new Error(`BLOCKED_HTTP_${statusCode}`);
       }
+      throwIfPageGone(statusCode, page.url());
 
       let initialHtml = await page.content();
       if (isBlockedContent(initialHtml)) {
@@ -425,7 +442,8 @@ async function runScrape(): Promise<ScrapeRunSummary> {
       const message = error instanceof Error ? error.message : String(error);
       outcomes.push({
         operator: operatorName,
-        status: /BLOCKED_|captcha|datadome|cloudflare/i.test(message) ? 'blocked' : 'failed',
+        // « Request blocked - received 403 status code. » est levé par Crawlee lui-même.
+        status: /BLOCKED_|request blocked|captcha|datadome|cloudflare/i.test(message) ? 'blocked' : 'failed',
         offers: 0,
         durationMs: Date.now() - Number(request.userData.startedAt || Date.now()),
         mode: 'browser',
@@ -682,6 +700,16 @@ function copyOptionalMoney(plan: ScrapedPlan) {
 
 function roundMoney(value: number) {
   return Math.round(value * 100) / 100;
+}
+
+/**
+ * Une page supprimée ne réapparaîtra pas en réessayant : on échoue tout de suite
+ * avec un message explicite plutôt qu'un « 0/N offre(s) » trompeur.
+ */
+function throwIfPageGone(statusCode: number | undefined, url: string) {
+  if (statusCode === 404 || statusCode === 410) {
+    throw new NonRetryableError(`PAGE_INTROUVABLE_HTTP_${statusCode} : ${url} (URL de l'opérateur probablement obsolète)`);
+  }
 }
 
 function isBlockedContent(html: string) {

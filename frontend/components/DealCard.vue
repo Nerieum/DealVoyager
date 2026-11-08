@@ -1,22 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import OperatorBadge from './OperatorBadge.vue'
-
-interface MobilePlan {
-  id: number;
-  operator: string;
-  planName: string;
-  price: number;
-  simPrice: number | null;
-  dataGb: number;
-  calls: string;
-  sms: string;
-  network: string;
-  networkGeneration: string;
-  dataEuGb: number | null;
-  score: number;
-  url: string;
-}
+import { computed } from "vue";
+import OperatorBadge from "./OperatorBadge.vue";
+import type { MobilePlan } from "../types/deals";
+import { formatData, formatMoney } from "../utils/deals";
 
 const props = defineProps<{
   deal: MobilePlan;
@@ -25,108 +11,125 @@ const props = defineProps<{
   simPrice: number | null;
   activationPrice: number | null;
   cancellationPrice: number | null;
-}>()
-
-const hasUnknownFees = computed(() => [props.simPrice, props.activationPrice, props.cancellationPrice].some(fee => fee == null))
-const annualPrice = computed(() => props.deal.price * 12
-  + (props.simPrice ?? 0)
-  + (props.activationPrice ?? 0)
-  + (props.cancellationPrice ?? 0))
-
-const formattedScore = (score: number | null) => {
-  if (!score || score <= 0) return null
-  return score.toFixed(3)
-}
-
+}>();
+const hasUnknownFees = computed(() =>
+  [props.simPrice, props.activationPrice, props.cancellationPrice].some(
+    (fee) => fee == null,
+  ),
+);
+const annualPrice = computed(
+  () =>
+    props.deal.price * 12 +
+    (props.simPrice ?? 0) +
+    (props.activationPrice ?? 0) +
+    (props.cancellationPrice ?? 0),
+);
+const priceParts = computed(() => props.deal.price.toFixed(2).split("."));
+const formatFee = (value: number | null) =>
+  value == null ? "Non renseigné" : formatMoney(value);
 </script>
 
 <template>
-  <div 
-    :class="[
-      'relative neo-box p-6 md:p-8 flex flex-col',
-      isStarOffer ? 'bg-primary border-4 border-border transform hover:-translate-y-2 text-primary-foreground' : 'bg-card text-card-foreground hover:-translate-y-1'
-    ]"
+  <article
+    class="poster-ticket"
+    :class="{ 'poster-ticket-star': isStarOffer }"
+    :aria-labelledby="`offer-${deal.id}`"
   >
-    <!-- Star Offer Ribbon -->
-    <div v-if="isStarOffer" class="absolute -top-6 -right-6 md:-top-5 md:-right-5 z-20 transform rotate-12">
-      <div class="bg-accent text-accent-foreground px-4 py-2 border-4 border-border shadow-neo font-black uppercase text-lg flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-        Le Meilleur Choix
+    <div class="poster-ticket-main">
+      <div v-if="isStarOffer" class="poster-ticket-topline">
+        <span class="poster-ranking">En tête du classement</span>
       </div>
+      <OperatorBadge
+        :name="deal.operator"
+        :network="deal.network || 'Non renseigné'"
+        :network-generation="deal.networkGeneration || undefined"
+      />
+      <h3 :id="`offer-${deal.id}`">{{ deal.planName }}</h3>
+      <div class="poster-plan-features">
+        <span class="poster-data-amount"
+          >{{ formatData(deal.dataGb) }}<small>en France</small></span
+        >
+        <span
+          v-if="deal.dataEuGb != null && deal.dataEuGb > 0"
+          class="poster-eu-data"
+          >{{ formatData(deal.dataEuGb) }}<small>Europe / DOM</small></span
+        >
+      </div>
+      <p v-if="!isFairplay" class="poster-price-warning">
+        <span aria-hidden="true">!</span> Augmentation probable
+      </p>
     </div>
-
-    <div class="flex-1">
-      <div class="flex flex-col gap-4 mb-6 relative z-10">
-        <OperatorBadge :name="deal.operator" :network="deal.network || 'Inconnu'" :network-generation="deal.networkGeneration" />
-        
-        <!-- Alert not fairplay -->
-        <div v-if="!isFairplay" class="self-start inline-flex bg-destructive text-destructive-foreground px-3 py-1 text-xs font-bold uppercase border-2 border-border shadow-neo transform -rotate-2">
-          ⚠️ Augmentation probable
-        </div>
+    <div class="poster-ticket-price">
+      <div
+        class="poster-monthly-price"
+        :aria-label="`${formatMoney(deal.price)} par mois`"
+      >
+        <span
+          >{{ priceParts[0]
+          }}<span class="poster-price-decimals"
+            >,{{ priceParts[1] }}</span
+          ></span
+        ><span class="poster-price-unit">€<small>/ mois</small></span>
       </div>
-      
-      <h3 :class="['font-black mb-4 leading-tight', isStarOffer ? 'text-3xl md:text-5xl text-primary-foreground' : 'text-xl md:text-2xl text-card-foreground']">
-        {{ deal.planName }}
-      </h3>
-      
-      <div class="flex flex-wrap gap-2 mb-6 text-sm font-bold uppercase">
-        <span class="bg-card border-2 border-border text-card-foreground flex items-center gap-1.5 px-2 py-1" title="Appels">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-1.36-.63-2.8-1.5-4.04-2.74-1.24-1.24-2.11-2.68-2.74-4.04l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" /></svg>
-          {{ deal.calls }}
-        </span>
-        <span class="bg-card border-2 border-border text-card-foreground flex items-center gap-1.5 px-2 py-1" title="SMS/MMS">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 9.75a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 01.778-.332 48.294 48.294 0 005.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" /></svg>
-          {{ deal.sms }}
-        </span>
-        <span class="bg-secondary border-2 border-border text-secondary-foreground flex items-center gap-1.5 px-2 py-1" title="Data Internet">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z" /></svg>
-          {{ deal.dataGb < 1 ? (deal.dataGb * 1000) + ' Mo' : deal.dataGb + ' Go' }}
-        </span>
-        <span v-if="deal.dataEuGb && deal.dataEuGb > 0" class="bg-card border-2 border-border text-card-foreground flex items-center gap-1.5 px-2 py-1" title="Data en Europe/DOM">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5a17.92 17.92 0 01-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" /></svg>
-          {{ deal.dataEuGb }} Go EU
-        </span>
-        <span v-if="formattedScore(deal.score)" class="bg-muted border-2 border-border text-muted-foreground px-2 py-1">{{ formattedScore(deal.score) }} €/Go</span>
-      </div>
+      <p class="poster-annual-price">
+        <span>{{
+          hasUnknownFees ? "Minimum sur 12 mois" : "Total sur 12 mois"
+        }}</span
+        ><strong>{{ formatMoney(annualPrice) }}</strong>
+      </p>
+      <p v-if="hasUnknownFees" class="poster-unknown-fees">
+        Certains frais restent à vérifier.
+      </p>
+      <p v-else class="poster-known-fees">Carte SIM et frais compris.</p>
+      <a
+        v-if="deal.url"
+        :href="deal.url"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="poster-button poster-offer-link"
+        >Voir chez l'opérateur <span aria-hidden="true">↗</span></a
+      ><span v-else class="poster-link-unavailable"
+        >Lien opérateur indisponible</span
+      >
     </div>
-    
-    <div :class="['mt-auto pt-6 border-t-4 border-border flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-0']">
-      
-      <div>
-        <div :class="['text-sm font-bold uppercase mb-1', isStarOffer ? 'text-primary-foreground' : 'text-card-foreground']">Prix mensuel</div>
-        <div class="flex items-baseline font-black leading-none">
-          <span :class="isStarOffer ? 'text-5xl md:text-7xl text-primary-foreground' : 'text-3xl md:text-4xl text-card-foreground'">{{ deal.price.toString().split('.')[0] }}</span>
-          <span :class="isStarOffer ? 'text-3xl md:text-4xl text-primary-foreground' : 'text-xl md:text-2xl text-card-foreground'">,{{ deal.price.toFixed(2).split('.')[1] || '00' }}</span>
-          <span :class="['text-xl ml-1 block mt-2', isStarOffer ? 'text-primary-foreground' : 'text-card-foreground']">€</span>
+    <details class="poster-ticket-details">
+      <summary>
+        Détails du forfait et des frais <span aria-hidden="true">+</span>
+      </summary>
+      <dl>
+        <div v-if="deal.calls">
+          <dt>Appels</dt>
+          <dd>{{ deal.calls }}</dd>
         </div>
-      </div>
-
-      <div class="text-left sm:text-right flex flex-col items-start sm:items-end gap-1 w-full sm:w-auto">
-        <div class="bg-card border-2 border-border px-3 py-1 font-bold text-xs uppercase shadow-neo-hover flex flex-col items-start sm:items-end leading-tight text-card-foreground w-full sm:w-auto">
-          <span>Carte SIM: <span class="text-primary text-base">{{ simPrice == null ? 'Non détecté' : simPrice + '€' }}</span></span>
-          <span class="text-[10px] text-muted-foreground">Activation: {{ activationPrice == null ? 'Non détecté' : activationPrice + '€' }}</span>
-          <span class="text-[10px] text-muted-foreground">Résiliation: {{ cancellationPrice == null ? 'Non détecté' : cancellationPrice + '€' }}</span>
+        <div v-if="deal.sms">
+          <dt>SMS/MMS</dt>
+          <dd>{{ deal.sms }}</dd>
         </div>
-        <div :class="[
-          'px-3 py-1 font-bold text-xs uppercase w-full sm:w-auto text-center sm:text-right', 
-          isStarOffer ? 'bg-foreground text-background' : 'bg-muted border-2 border-border text-muted-foreground'
-        ]">
-          {{ hasUnknownFees ? '1 an, minimum :' : '1 an :' }} {{ annualPrice.toFixed(2) }}€
+        <div>
+          <dt>Carte SIM</dt>
+          <dd>{{ formatFee(simPrice) }}</dd>
         </div>
-      </div>
-
-    </div>
-    
-    <!-- Link to operator page -->
-    <div class="mt-8">
-      <a :href="deal.url" target="_blank" rel="noopener noreferrer" :class="[
-        'w-full neo-button text-xl justify-between group',
-        isStarOffer ? 'bg-card text-card-foreground hover:bg-muted' : 'bg-foreground text-background hover:bg-accent hover:text-accent-foreground'
-      ]">
-        <span>{{ isStarOffer ? 'Souscrire maintenant' : 'Voir ce forfait' }}</span>
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-      </a>
-    </div>
-
-  </div>
+        <div>
+          <dt>Activation</dt>
+          <dd>{{ formatFee(activationPrice) }}</dd>
+        </div>
+        <div>
+          <dt>Résiliation</dt>
+          <dd>{{ formatFee(cancellationPrice) }}</dd>
+        </div>
+        <div v-if="deal.score != null && deal.score > 0 && deal.dataGb < 9999">
+          <dt>Prix par Go</dt>
+          <dd>{{ deal.score.toFixed(3).replace(".", ",") }} €/Go</dd>
+        </div>
+      </dl>
+      <p>
+        12 × {{ formatMoney(deal.price) }} + carte SIM + activation +
+        résiliation.{{
+          hasUnknownFees
+            ? " Le minimum affiché inclut uniquement les frais renseignés."
+            : ""
+        }}
+      </p>
+    </details>
+  </article>
 </template>

@@ -24,7 +24,7 @@ RUN npm run build
 RUN npm prune --omit=dev && npm cache clean --force
 
 # Stage 2: Final Run Image, alignee sur la version npm de Playwright.
-FROM --platform=linux/amd64 mcr.microsoft.com/playwright:v1.61.1-noble
+FROM --platform=linux/amd64 mcr.microsoft.com/playwright:v1.64.1-noble
 
 WORKDIR /home/pwuser/app
 

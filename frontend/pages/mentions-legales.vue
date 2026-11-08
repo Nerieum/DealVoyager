@@ -182,10 +182,10 @@ useHead({
         <div class="space-y-4 text-card-foreground font-medium text-lg leading-relaxed pl-14">
           <p>Le site DealVoyager peut contenir des liens vers des sites externes appartenant à des opérateurs ou partenaires.</p>
           <p>
-            Certains liens peuvent être des <span class="bg-secondary px-1 font-bold border-2 border-border text-secondary-foreground">liens d'affiliation</span>.
-            Lorsqu'un utilisateur clique sur ces liens et souscrit à une offre, une commission peut être versée à l'éditeur du site, sans impact sur le prix payé par l'utilisateur.
+            Des <span class="bg-secondary px-1 font-bold border-2 border-border text-secondary-foreground">liens d'affiliation</span> pourront être proposés.
+            Dans ce cas, lorsqu'un utilisateur clique sur ces liens et souscrit à une offre, une commission pourra être versée à l'éditeur du site, sans impact sur le prix payé par l'utilisateur.
           </p>
-          <p>Ces commissions permettent de financer le fonctionnement et le développement du site.</p>
+          <p>Ces éventuelles commissions pourraient contribuer au financement du fonctionnement et du développement du site.</p>
         </div>
       </section>
 
@@ -232,6 +232,7 @@ useHead({
               Ce site utilise le service
               <span class="bg-muted px-1 border-2 border-border font-bold text-foreground">Google Fonts</span>
               pour l'affichage des polices d'écriture
+              <span class="bg-muted px-1 border-2 border-border font-bold text-foreground">Anton</span>,
               <span class="bg-muted px-1 border-2 border-border font-bold text-foreground">Outfit</span> et
               <span class="bg-muted px-1 border-2 border-border font-bold text-foreground">Space Grotesk</span>.
               Lors du chargement d'une page, votre navigateur établit une connexion avec les serveurs de Google (Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, États-Unis) afin de récupérer ces polices.

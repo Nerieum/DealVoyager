@@ -11,7 +11,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     apiInternalUrl: "http://localhost:3001",
     public: {
-      discordClientId: "",
+      discordClientId: "1285307038930309122",
     },
   },
   colorMode: {
@@ -37,12 +37,12 @@ export default defineNuxtConfig({
         },
         {
           rel: "stylesheet",
-          href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap",
+          href: "https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap",
         },
         {
           rel: "icon",
           type: "image/svg+xml",
-          href: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📡</text></svg>",
+          href: "/favicon.svg",
         },
       ],
     },

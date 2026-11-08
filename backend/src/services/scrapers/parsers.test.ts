@@ -4,7 +4,8 @@ import { operatorDefinitions, validateAndNormalizePlans } from '../scraper.servi
 import { parseAkeoText } from './akeo.scraper';
 import { parseFranceTelephoneText } from './francetelephone.scraper';
 import { discoverFreePlanUrls } from './free.scraper';
-import { parseLebaraText } from './lebara.scraper';
+import { parseBAndYouText } from './byou.scraper';
+import { parseLebaraStructuredData, parseLebaraText } from './lebara.scraper';
 import { parseSymaText } from './syma.scraper';
 import { parseTelecoopText } from './telecoop.scraper';
 import { extractCheckoutCandidateUrls, extractCheckoutFeesFromText, extractFeesFromPdfText, extractFeesFromText, extractTariffPdfUrl, extractVisibleTextFromHtml } from './utils';
@@ -84,6 +85,81 @@ test('France Téléphone ignore les box et moyenne les promotions sur douze mois
   assert.equal(plans[0].price, 14.4);
   assert.equal(plans[0].operator, 'France Téléphone');
   assert.deepEqual(plans.map((plan) => plan.network), ['Orange', 'Bouygues Telecom']);
+});
+
+test('France Téléphone lit la nouvelle page (nom avant la data, lignes compactes)', () => {
+  const plans = parseFranceTelephoneText(`
+    Nos forfaits mobiles
+    1 GoVITALITE5,90 € /mois
+    100 GoESSENTIEL14,90 € /mois
+    Choisissez votre forfait BleuTel
+    Le plus choisi5G
+    ESSENTIEL
+    100Go
+    14,90 €/mois
+    VITALITE1Go5G5,90 €/mois
+    PRIVILEGE20Go5G9,90 €/mois
+    OPTIMAL+200Go5G24,90 €/mois
+    OPTIMAL
+    150Go
+    5G
+    Appels illimités · Europe & DOM · Engagement : zéro
+    19,90 €/mois
+    Forfait fixe BleuFix
+    19,90 €/mois
+  `);
+  const byName = new Map(plans.filter((plan) => plan.network === 'Orange').map((plan) => [plan.planName, [plan.dataGb, plan.price]]));
+  assert.deepEqual(Object.fromEntries(byName), {
+    'Forfait Mobile ESSENTIEL (Orange)': [100, 14.9],
+    'Forfait Mobile OPTIMAL (Orange)': [150, 19.9],
+    'Forfait Mobile VITALITE (Orange)': [1, 5.9],
+    'Forfait Mobile PRIVILEGE (Orange)': [20, 9.9],
+    'Forfait Mobile OPTIMAL+ (Orange)': [200, 24.9],
+  });
+  assert.equal(plans.length, 10);
+});
+
+test('B&You lit la gamme dans les mentions légales et exclut packs et fibre', () => {
+  const plans = parseBAndYouText(`
+    B&YOU Pure fibre : offre valable à partir du 26/01/26. Frais de mise en service : 48€ frais de résiliation : 69€. 24,99€/mois.
+    Série spéciale B&You illimité 1Go (1€99/mois)
+    Carte SIM à 1€
+    Frais d’activation à 1€ (à payer sur la 1ère facture seulement)
+    Frais de résiliation : 5€.
+    1Go en France métropolitaine dont 1Go utilisables en Europe/DOM.
+    Série spéciale B&YOU 20Go 5G dont 20Go valables en Europe/DOM à 9,99€/mois
+    SIM à 1€. Frais d’activation à 1€. Frais de résiliation : 5€.
+    Série spéciale B&YOU 20Go 4G dont 20Go valables en Europe/DOM à 8,99€/mois
+    SIM à 1€. Frais d’activation à 1€. Frais de résiliation : 5€.
+    B&YOU Pack Amazon Prime 170Go 5G dont 60Go en Europe/DOM à 17,99€/mois
+    Carte SIM à 1€
+    Série spéciale B&YOU 300Go 5G dont 40Go valables dans + de 160 destinations à 19€99/mois
+    Carte SIM à 1€. Frais d’activation à 1€. Frais de résiliation : 5€
+  `);
+  assert.deepEqual(plans.map((plan) => [plan.planName, plan.dataGb, plan.price, plan.networkGeneration, plan.dataEuGb]), [
+    ['Forfait B&You 1 Go', 1, 1.99, '4G', 1],
+    ['Forfait B&You 20 Go 5G', 20, 9.99, '5G', 20],
+    ['Forfait B&You 20 Go 4G', 20, 8.99, '4G', 20],
+    ['Forfait B&You 300 Go', 300, 19.99, '5G', 40],
+  ]);
+  assert.ok(plans.every((plan) => plan.simPrice === 1 && plan.activationPrice === 1 && plan.cancellationPrice === 5));
+});
+
+test('Lebara lit les forfaits dans le JSON-LD schema.org quand la page est rendue en JS', () => {
+  const products = [
+    { '@type': 'Product', name: 'Forfait 30 Go', description: "Réseau 4G/4G+,Dont 10Go en itinérance depuis l'UE et les DOM,La Carte SIM est gratuite,Flexible et sans engagement", offers: { '@type': 'Offer', priceCurrency: 'EUR', price: '7.99' } },
+    { '@type': 'Product', name: 'Forfait 200 Go 5G', description: "5G incluse,Dont 15 Go en itinérance depuis l'UE et les DOM,La SIM / eSIM est gratuite,Flexible et sans engagement", offers: { '@type': 'Offer', priceCurrency: 'EUR', price: '9.99' } },
+  ];
+  const html = `<html><body><div id="root"></div>
+    <script type="application/ld+json">{"@type":"FAQPage","mainEntity":[]}</script>
+    <script type="application/ld+json">${JSON.stringify(products)}</script>
+    <script type="application/ld+json">{invalide</script></body></html>`;
+  const plans = parseLebaraStructuredData(html);
+  assert.deepEqual(plans.map((plan) => [plan.planName, plan.dataGb, plan.price, plan.networkGeneration, plan.dataEuGb]), [
+    ['Forfait Lebara 30 Go', 30, 7.99, '4G', 10],
+    ['Forfait Lebara 200 Go', 200, 9.99, '5G', 15],
+  ]);
+  assert.ok(plans.every((plan) => plan.simPrice === 0 && plan.cancellationPrice === 0));
 });
 
 test('Free découvre les forfaits depuis les liens sans routes prédéfinies', () => {

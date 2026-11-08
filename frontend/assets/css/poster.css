@@ -1,0 +1,1388 @@
+/* Public catalogue. The administration keeps its existing styles. */
+.poster-site {
+  --poster-paper: #f4f0e8;
+  --poster-surface: var(--card);
+  --poster-ink: #25241f;
+  --poster-muted: #67645a;
+  --poster-line: #292820;
+  --poster-soft-line: #d1ccc1;
+  --poster-yellow: #ffd000;
+  --poster-pink: #ffb0e6;
+  --poster-violet: #5146d5;
+  --poster-focus: #5146d5;
+  --poster-grain: rgb(41 40 32 / 8%);
+  --poster-doodle: #5146d5;
+  --border: #292820;
+  min-height: 100vh;
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  background: var(--poster-paper);
+  background-image: radial-gradient(
+    var(--poster-grain) 0.7px,
+    transparent 0.8px
+  );
+  background-size: 7px 7px;
+  color: var(--poster-ink);
+  font-family: Outfit, Arial, sans-serif;
+  --poster-frame-border: 2px solid var(--poster-line);
+  --poster-frame-shadow: var(--shadow-neo);
+}
+.dark .poster-site {
+  --poster-paper: #22231f;
+  --poster-ink: #f4f0e8;
+  --poster-muted: #c0bcaf;
+  --poster-line: #ded9cb;
+  --poster-soft-line: #53554b;
+  --poster-focus: #b9b2ff;
+  --poster-grain: rgb(244 240 232 / 7%);
+  --poster-doodle: #b9b2ff;
+  --border: #ded9cb;
+}
+.poster-background-art {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.poster-margin-mark {
+  display: none;
+  position: absolute;
+  width: clamp(52px, calc((100vw - 1248px) / 2), 88px);
+}
+@media (min-width: 1360px) {
+  .poster-margin-mark {
+    display: block;
+  }
+  .poster-margin-star {
+    top: 390px;
+    left: max(8px, calc((100% - 1380px) / 4));
+    transform: rotate(-3deg);
+  }
+  .poster-margin-loop {
+    top: 680px;
+    right: max(8px, calc((100% - 1380px) / 4));
+    transform: rotate(3deg);
+  }
+  .poster-margin-sun {
+    top: 1250px;
+    left: max(8px, calc((100% - 1380px) / 4));
+  }
+}
+.poster-site *,
+.poster-site *::before,
+.poster-site *::after {
+  box-sizing: border-box;
+}
+.poster-site :is(button, input, a, summary):focus-visible {
+  outline: 3px solid var(--poster-focus);
+  outline-offset: 4px;
+}
+.poster-site :is(button, summary) {
+  cursor: pointer;
+}
+.poster-site a {
+  text-underline-offset: 4px;
+}
+.poster-site :is(section[id], main[id]) {
+  scroll-margin-top: 24px;
+}
+.poster-shell {
+  width: min(1200px, calc(100% - 64px));
+  margin-inline: auto;
+}
+.poster-page-content {
+  flex: 1;
+  min-width: 0;
+}
+.poster-skip-link {
+  position: fixed;
+  z-index: 100;
+  top: 12px;
+  left: 12px;
+  padding: 12px 18px;
+  background: var(--poster-yellow);
+  color: #25241f;
+  transform: translateY(-200%);
+}
+.poster-skip-link:focus {
+  transform: none;
+}
+
+.poster-masthead {
+  display: block;
+  border: var(--poster-frame-border);
+  box-shadow: var(--poster-frame-shadow);
+  background: var(--poster-surface);
+  margin-top: 20px;
+  padding: 0;
+}
+.poster-masthead-bar {
+  min-height: 84px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 18px 20px;
+}
+.poster-masthead-home .poster-masthead-bar {
+  border-bottom: var(--poster-frame-border);
+}
+.poster-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.poster-brand-symbol {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 44px;
+  background: var(--poster-yellow);
+  color: #25241f;
+  border: 2px solid var(--poster-line);
+  box-shadow: 2px 2px 0 var(--shadow-color);
+}
+.poster-brand-symbol svg {
+  width: 32px;
+  height: 32px;
+}
+.poster-wordmark > span:last-child {
+  font:
+    800 20px/0.95 Outfit,
+    Arial,
+    sans-serif;
+  letter-spacing: -0.05em;
+}
+.poster-wordmark > span:last-child > span {
+  display: block;
+}
+.poster-brand-period {
+  color: var(--poster-violet);
+}
+.dark .poster-brand-period {
+  color: var(--poster-pink);
+}
+.poster-navigation {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  margin-left: auto;
+}
+.poster-navigation a {
+  font-size: 14px;
+  font-weight: 600;
+  padding-block: 12px;
+}
+.poster-navigation a:hover {
+  text-decoration: underline;
+}
+.poster-header-aside {
+  display: flex;
+  align-items: center;
+}
+.poster-theme-switch {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--poster-line);
+  border-radius: 0;
+  background: var(--poster-surface);
+  box-shadow: 2px 2px 0 var(--shadow-color);
+}
+.poster-theme-switch:hover {
+  border-color: var(--poster-ink);
+}
+.poster-theme-switch svg {
+  width: 20px;
+  height: 20px;
+}
+
+.poster-home {
+  padding-top: 28px;
+}
+.poster-intro {
+  padding: 24px 32px 28px;
+}
+.poster-headline {
+  margin: 0;
+  font:
+    700 54px/0.99 Georgia,
+    "Times New Roman",
+    serif;
+  letter-spacing: -0.055em;
+}
+.poster-headline > span {
+  font-style: italic;
+  font-weight: 400;
+  display: inline-block;
+  white-space: nowrap;
+  background: var(--poster-yellow);
+  color: #111111;
+  border: 4px solid var(--poster-line);
+  box-shadow: var(--poster-frame-shadow);
+  padding: 4px 12px 7px;
+  margin-top: 9px;
+  transform: rotate(-1deg);
+}
+.poster-intro-copy {
+  max-width: 760px;
+  margin-top: 18px;
+  font-size: 17px;
+  line-height: 1.65;
+}
+.poster-comparator-layout {
+  display: grid;
+  grid-template-columns: 264px minmax(0, 1fr);
+  align-items: start;
+  gap: 34px;
+}
+.poster-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.poster-filter {
+  padding: 20px 18px;
+  background: var(--poster-surface);
+  border: 4px solid var(--poster-line);
+  box-shadow: 6px 6px 0 var(--shadow-color);
+}
+.poster-data-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.poster-data-heading h2 {
+  font-size: 17px;
+  font-weight: 600;
+}
+.poster-data-value {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  border-bottom: 1px solid var(--poster-line);
+}
+.poster-data-value input {
+  appearance: textfield;
+  -moz-appearance: textfield;
+  width: 68px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  text-align: right;
+  font:
+    500 36px/1.1 "Space Grotesk",
+    sans-serif;
+}
+.poster-data-value input::-webkit-inner-spin-button,
+.poster-data-value input::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+.poster-data-value > span {
+  font:
+    400 12px "Space Grotesk",
+    sans-serif;
+}
+.poster-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 7px;
+  margin: 25px 0 12px;
+  border: 1px solid var(--poster-line);
+  border-radius: 0;
+  background: linear-gradient(
+    to right,
+    var(--poster-yellow) 0% var(--range-progress),
+    var(--poster-paper) var(--range-progress) 100%
+  );
+  cursor: pointer;
+}
+.poster-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 15px;
+  height: 25px;
+  background: var(--poster-ink);
+  border: 2px solid var(--poster-surface);
+  border-radius: 0;
+  outline: 1px solid var(--poster-line);
+}
+.poster-range::-moz-range-thumb {
+  width: 15px;
+  height: 25px;
+  background: var(--poster-ink);
+  border: 2px solid var(--poster-surface);
+  border-radius: 0;
+  outline: 1px solid var(--poster-line);
+}
+.poster-range-limits {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--poster-muted);
+}
+.poster-networks {
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  margin-top: 23px;
+}
+.poster-networks legend {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 9px;
+}
+.poster-network-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+.poster-network-options button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 8px 4px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid var(--poster-soft-line);
+  background: var(--poster-paper);
+}
+.poster-network-options button[aria-pressed="false"] {
+  color: var(--poster-muted);
+  background: transparent;
+}
+.poster-network-options button:hover {
+  border-color: var(--poster-line);
+}
+.poster-network-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.poster-network-options svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+.poster-network-options button[aria-pressed="false"] svg {
+  visibility: hidden;
+}
+
+/* Images retain their natural ratio inside a definite, unclipped flex frame. */
+.operator-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 76px;
+  max-width: 100%;
+  height: 38px;
+  padding: 3px;
+  background: #fff;
+  overflow: visible;
+}
+.operator-logo img {
+  display: block;
+  flex: none;
+  width: auto;
+  height: auto;
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.operator-logo-fallback {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.poster-operator-roster {
+  padding: 16px 12px 12px;
+  border: var(--poster-frame-border);
+  background: var(--poster-surface);
+  min-width: 0;
+  box-shadow: var(--poster-frame-shadow);
+}
+.poster-operator-roster h2 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.poster-operator-roster ul {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  padding: 0;
+  margin: 0;
+}
+.operator-chip {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 5px 3px 4px;
+  background: #fff;
+  color: #25241f;
+  border: 1px solid #292820;
+  border-bottom: 3px solid var(--operator-color);
+}
+.operator-chip > span:last-child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 27px;
+  width: 100%;
+  font-size: 10.5px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.2;
+  overflow-wrap: normal;
+}
+.operator-chip .operator-logo {
+  width: 100%;
+  padding: 3px 1px;
+}
+
+.poster-results {
+  min-width: 0;
+}
+.poster-section-heading {
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid var(--poster-line);
+}
+.poster-results-heading h2 {
+  font:
+    400 27px/1.2 Georgia,
+    "Times New Roman",
+    serif;
+  letter-spacing: -0.025em;
+}
+.poster-ticket {
+  min-width: 0;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 230px;
+  border: var(--poster-frame-border);
+  background: var(--poster-surface);
+  box-shadow: var(--poster-frame-shadow);
+}
+.poster-ticket-main {
+  min-width: 0;
+  padding: 20px;
+}
+.poster-ticket-topline {
+  margin-bottom: 12px;
+}
+.poster-ranking {
+  font-size: 12px;
+  font-weight: 600;
+}
+.poster-operator {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  column-gap: 9px;
+  row-gap: 7px;
+}
+.poster-operator-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+.poster-operator-name .operator-logo {
+  width: 64px;
+  height: 34px;
+  border-bottom: 2px solid var(--operator-color);
+}
+.poster-operator-network {
+  font-size: 12px;
+  color: var(--poster-muted);
+}
+.poster-network-generation {
+  font:
+    500 10px "Space Grotesk",
+    sans-serif;
+  border: 1px solid var(--poster-soft-line);
+  padding: 2px 4px;
+}
+.poster-ticket h3 {
+  margin-top: 11px;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+.poster-plan-features {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-top: 17px;
+}
+.poster-data-amount {
+  font:
+    600 34px/1.1 "Space Grotesk",
+    sans-serif;
+  letter-spacing: -0.045em;
+}
+.poster-eu-data {
+  font:
+    500 23px/1.15 "Space Grotesk",
+    sans-serif;
+  letter-spacing: -0.03em;
+}
+.poster-plan-features small {
+  display: block;
+  font:
+    400 11px/1.5 Outfit,
+    Arial,
+    sans-serif;
+  color: var(--poster-muted);
+  letter-spacing: 0;
+  margin-top: 4px;
+}
+.poster-price-warning {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  color: #a1272b;
+  font-size: 12px;
+  font-weight: 500;
+}
+.poster-price-warning > span {
+  display: inline-grid;
+  place-items: center;
+  height: 14px;
+  width: 14px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: 10px;
+}
+.dark .poster-price-warning {
+  color: #ffb2b5;
+}
+.poster-ticket-price {
+  background: #f0edff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+  border-left: 1px solid var(--poster-soft-line);
+}
+.poster-monthly-price {
+  color: var(--poster-violet);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font:
+    600 50px/1 "Space Grotesk",
+    sans-serif;
+  letter-spacing: -0.06em;
+  font-variant-numeric: tabular-nums;
+}
+.poster-price-decimals {
+  font-size: 0.7em;
+}
+.poster-price-unit {
+  font-size: 19px;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+.poster-price-unit small {
+  display: block;
+  white-space: nowrap;
+  font:
+    400 11px/1.6 Outfit,
+    Arial,
+    sans-serif;
+}
+.poster-annual-price {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 12px;
+}
+.poster-annual-price strong {
+  font:
+    600 20px "Space Grotesk",
+    sans-serif;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+}
+.poster-known-fees,
+.poster-unknown-fees {
+  color: var(--poster-muted);
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.poster-unknown-fees {
+  font-weight: 500;
+}
+.poster-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  min-height: 44px;
+  padding: 11px 17px;
+  border: var(--poster-frame-border);
+  background: var(--poster-yellow);
+  color: #25241f;
+  font-size: 14px;
+  font-weight: 500;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  box-shadow: var(--poster-frame-shadow);
+}
+.poster-button > span {
+  font-size: 20px;
+  line-height: 1;
+}
+.poster-button:hover {
+  background: var(--poster-ink);
+  color: var(--poster-paper);
+}
+.poster-button-outline {
+  background: transparent;
+  color: var(--poster-ink);
+}
+.poster-offer-link {
+  display: flex;
+  width: 100%;
+  margin-top: 15px;
+  padding: 11px 12px;
+  border: var(--poster-frame-border);
+  background: var(--poster-violet);
+  color: #ffffff;
+  font-size: 13px;
+  box-shadow: 2px 2px 0 var(--shadow-color);
+}
+.poster-offer-link:hover {
+  background: #3d32b3;
+  color: #ffffff;
+}
+.dark .poster-ticket-price {
+  background: #302c46;
+}
+.dark .poster-monthly-price {
+  color: #c3baff;
+}
+.poster-link-unavailable {
+  display: block;
+  margin-top: 15px;
+  font-size: 12px;
+  color: var(--poster-muted);
+}
+.poster-ticket-details {
+  grid-column: 1/-1;
+  border-top: 1px solid var(--poster-soft-line);
+}
+.poster-ticket-details summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 42px;
+  padding: 11px 20px;
+  list-style: none;
+  font-size: 12px;
+  color: var(--poster-muted);
+}
+.poster-ticket-details summary::-webkit-details-marker {
+  display: none;
+}
+.poster-ticket-details summary:hover {
+  text-decoration: underline;
+}
+.poster-ticket-details summary > span {
+  font-size: 18px;
+}
+.poster-ticket-details[open] summary > span {
+  transform: rotate(45deg);
+}
+.poster-ticket-details dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  padding: 4px 20px 16px;
+  font-size: 12px;
+}
+.poster-ticket-details dt {
+  color: var(--poster-muted);
+}
+.poster-ticket-details dd {
+  margin-top: 3px;
+  font-weight: 500;
+}
+.poster-ticket-details > p {
+  padding: 0 20px 18px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--poster-muted);
+}
+.poster-ticket-star {
+  border: var(--poster-frame-border);
+}
+.poster-ticket-star .poster-ticket-main {
+  padding: 22px;
+}
+.poster-ticket-star h3 {
+  font-size: 22px;
+  font-weight: 600;
+}
+.poster-ticket-star .poster-ticket-price {
+  --poster-muted: #5c4c16;
+  --poster-focus: #5146d5;
+  background: var(--poster-yellow);
+  color: #25241f;
+  border-left-color: #9f8c35;
+}
+.poster-ticket-star .poster-monthly-price {
+  font-size: 58px;
+  color: #25241f;
+}
+.poster-ticket-star .poster-annual-price strong {
+  font-size: 22px;
+}
+.poster-alternatives {
+  margin-top: 28px;
+}
+.poster-alternatives-heading {
+  margin-bottom: 14px;
+}
+.poster-alternatives-heading h3 {
+  font-size: 14px;
+  font-weight: 500;
+}
+.poster-alternatives-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+.poster-more-offers {
+  display: flex;
+  justify-content: center;
+  padding-top: 22px;
+}
+.poster-state {
+  min-height: 230px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  border: var(--poster-frame-border);
+  background: var(--poster-surface);
+  text-align: center;
+  box-shadow: var(--poster-frame-shadow);
+}
+.poster-state h3 {
+  font:
+    400 30px/1.2 Georgia,
+    "Times New Roman",
+    serif;
+}
+.poster-state p {
+  color: var(--poster-muted);
+  font-size: 15px;
+}
+.poster-eyebrow {
+  color: var(--poster-muted);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+.poster-loading-mark {
+  font-size: 35px;
+  color: var(--poster-violet);
+  animation: poster-loading 3s linear infinite;
+}
+@keyframes poster-loading {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.poster-service-notice {
+  margin-bottom: 18px;
+  padding: 12px 16px;
+  border-left: 3px solid var(--poster-violet);
+  background: var(--poster-surface);
+  font-size: 13px;
+}
+
+.poster-bottom-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 42px;
+}
+.poster-method {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  border: var(--poster-frame-border);
+  box-shadow: var(--poster-frame-shadow);
+  background: var(--poster-surface);
+  padding: 26px;
+}
+.poster-method h2 {
+  font:
+    400 34px/1.08 Georgia,
+    "Times New Roman",
+    serif;
+  letter-spacing: -0.035em;
+}
+.poster-method-independence {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: 14px;
+  text-decoration: underline;
+  text-decoration-color: var(--poster-pink);
+  text-decoration-thickness: 5px;
+  text-underline-offset: 2px;
+}
+.poster-method-content {
+  min-width: 0;
+}
+.poster-method-equation {
+  padding: 16px;
+  border: var(--poster-frame-border);
+  box-shadow: 2px 2px 0 var(--shadow-color);
+  background: var(--poster-yellow);
+  color: #25241f;
+  font:
+    500 25px/1.3 "Space Grotesk",
+    sans-serif;
+  letter-spacing: -0.045em;
+}
+.poster-method-equation span {
+  display: block;
+  margin-top: 4px;
+  font:
+    400 15px/1.6 Outfit,
+    Arial,
+    sans-serif;
+  letter-spacing: 0;
+}
+.poster-method-content > p:not(.poster-method-equation) {
+  margin-top: 18px;
+  color: var(--poster-muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+.poster-method-details {
+  margin-top: 22px;
+  border-block: 1px solid var(--poster-soft-line);
+}
+.poster-method-details summary {
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  list-style: none;
+  font-size: 14px;
+}
+.poster-method-details summary::-webkit-details-marker {
+  display: none;
+}
+.poster-method-details summary > span {
+  font-size: 20px;
+}
+.poster-method-details[open] summary > span {
+  transform: rotate(45deg);
+}
+.poster-method-details p {
+  padding-bottom: 16px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--poster-muted);
+}
+.poster-method-content > p.poster-method-note {
+  font-size: 12px;
+}
+.poster-discord {
+  --poster-muted: #eeebff;
+  --poster-focus: #ffd000;
+  display: flex;
+  flex-direction: column;
+  padding: 26px;
+  border: var(--poster-frame-border);
+  box-shadow: var(--poster-frame-shadow);
+  background: var(--poster-violet);
+  color: #ffffff;
+}
+.poster-discord-inner {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 22px;
+}
+.poster-discord h2 {
+  font:
+    400 34px/1.08 Georgia,
+    "Times New Roman",
+    serif;
+  letter-spacing: -0.035em;
+}
+.poster-discord h2 > span {
+  color: var(--poster-yellow);
+}
+.poster-discord-copy > p {
+  max-width: 420px;
+  margin-top: 14px;
+  color: var(--poster-muted);
+  font-size: 15px;
+  line-height: 1.65;
+}
+.poster-discord .poster-button {
+  margin-top: 20px;
+  width: 100%;
+  font-weight: 700;
+}
+.poster-discord-image {
+  display: block;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin-top: auto;
+  border: var(--poster-frame-border);
+  box-shadow: 2px 2px 0 var(--shadow-color);
+}
+.poster-discord-copy > p.poster-discord-unavailable {
+  font-size: 13px;
+}
+.poster-footer {
+  margin-block: 30px 28px;
+}
+.poster-footer > .poster-shell {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 24px;
+  padding: 22px;
+  border: var(--poster-frame-border);
+  box-shadow: var(--poster-frame-shadow);
+  background: var(--poster-surface);
+}
+.poster-footer-brand {
+  font:
+    800 24px/1.1 Outfit,
+    Arial,
+    sans-serif;
+  letter-spacing: -0.05em;
+}
+.poster-footer-brand > span {
+  color: var(--poster-violet);
+}
+.dark .poster-footer-brand > span {
+  color: var(--poster-pink);
+}
+.poster-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 24px;
+  font-size: 13px;
+}
+.poster-footer-links a:hover {
+  text-decoration: underline;
+}
+.poster-footer-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  color: var(--poster-muted);
+  font-size: 11px;
+}
+
+@media (max-width: 1199px) {
+  .poster-comparator-layout {
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 24px;
+  }
+  .poster-ticket {
+    grid-template-columns: minmax(0, 1fr) 216px;
+  }
+  .poster-ticket-main,
+  .poster-ticket-price {
+    padding: 17px;
+  }
+  .poster-ticket-star .poster-ticket-main {
+    padding: 19px;
+  }
+  .poster-ticket-star h3 {
+    font-size: 20px;
+  }
+  .poster-operator {
+    column-gap: 7px;
+  }
+  .poster-operator-name {
+    gap: 7px;
+    font-size: 13px;
+  }
+  .poster-operator-network {
+    font-size: 11px;
+  }
+  .operator-chip > span:last-child {
+    font-size: 10px;
+  }
+}
+@media (max-width: 959px) {
+  .poster-headline {
+    font-size: 49px;
+  }
+  .poster-intro-copy {
+    font-size: 16px;
+  }
+  .poster-comparator-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "filters" "offers" "operators";
+    gap: 28px;
+  }
+  .poster-controls {
+    display: contents;
+  }
+  .poster-filter {
+    grid-area: filters;
+  }
+  .poster-results {
+    grid-area: offers;
+  }
+  .poster-operator-roster {
+    grid-area: operators;
+  }
+  .poster-network-options {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .poster-operator-roster ul {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .operator-chip > span:last-child {
+    font-size: 11px;
+  }
+  .poster-bottom-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .poster-navigation {
+    gap: 20px;
+  }
+  .poster-discord-image {
+    max-width: 520px;
+  }
+  .poster-discord h2 {
+    font-size: 32px;
+  }
+  .poster-footer > .poster-shell {
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+  }
+  .poster-footer-links {
+    grid-column: 1/-1;
+    grid-row: 2;
+    justify-content: flex-start;
+  }
+}
+@media (max-width: 639px) {
+  .poster-shell {
+    width: calc(100% - 36px);
+  }
+  .poster-masthead {
+    margin-top: 16px;
+  }
+  .poster-masthead-bar {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    min-height: 0;
+    gap: 0 12px;
+    padding: 12px 12px 0;
+  }
+  .poster-brand-symbol {
+    width: 32px;
+    height: 35px;
+  }
+  .poster-brand-symbol svg {
+    width: 27px;
+    height: 27px;
+  }
+  .poster-wordmark {
+    gap: 8px;
+  }
+  .poster-wordmark > span:last-child {
+    font-size: 17px;
+  }
+  .poster-header-aside {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .poster-theme-switch {
+    width: 35px;
+    height: 35px;
+  }
+  .poster-navigation {
+    grid-column: 1/-1;
+    grid-row: 2;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 7px;
+    margin-left: 0;
+  }
+  .poster-navigation a {
+    padding-block: 12px;
+    font-size: 12px;
+  }
+  .poster-home {
+    padding-top: 24px;
+  }
+  .poster-intro {
+    padding: 20px 16px;
+  }
+  .poster-headline {
+    font-size: clamp(36px, 10.8vw, 45px);
+  }
+  .poster-intro-copy {
+    margin-top: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .poster-comparator-layout {
+    gap: 25px;
+  }
+  .poster-filter {
+    padding: 17px;
+  }
+  .poster-data-heading h2 {
+    font-size: 16px;
+  }
+  .poster-data-value input {
+    font-size: 32px;
+  }
+  .poster-range {
+    margin-block: 21px 12px;
+  }
+  .poster-networks {
+    margin-top: 18px;
+  }
+  .poster-network-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .poster-network-options button {
+    min-height: 36px;
+  }
+  .poster-section-heading {
+    padding-bottom: 13px;
+    margin-bottom: 14px;
+  }
+  .poster-results-heading h2 {
+    font-size: 25px;
+  }
+  .poster-ticket {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .poster-ticket-main,
+  .poster-ticket-star .poster-ticket-main {
+    padding: 18px;
+  }
+  .poster-ticket h3,
+  .poster-ticket-star h3 {
+    font-size: 19px;
+  }
+  .poster-ticket-topline {
+    margin-bottom: 12px;
+  }
+  .poster-operator-name {
+    font-size: 13px;
+  }
+  .poster-operator-network {
+    font-size: 11px;
+  }
+  .poster-operator-name .operator-logo {
+    width: 62px;
+    height: 34px;
+  }
+  .poster-plan-features {
+    gap: 25px;
+    margin-top: 15px;
+  }
+  .poster-data-amount {
+    font-size: 32px;
+  }
+  .poster-eu-data {
+    font-size: 23px;
+  }
+  .poster-price-warning {
+    margin-top: 12px;
+    font-size: 11px;
+  }
+  .poster-ticket-price {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 5px 14px;
+    padding: 17px 18px 13px;
+    border-left: 0;
+    border-top: 1px solid var(--poster-soft-line);
+  }
+  .poster-ticket-star .poster-ticket-price {
+    border-left: 0;
+    border-top-color: #9f8c35;
+  }
+  .poster-monthly-price,
+  .poster-ticket-star .poster-monthly-price {
+    grid-column: 1;
+    grid-row: 1/3;
+    font-size: 48px;
+  }
+  .poster-annual-price {
+    grid-column: 2;
+    grid-row: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    margin-top: 0;
+    font-size: 11px;
+  }
+  .poster-annual-price strong,
+  .poster-ticket-star .poster-annual-price strong {
+    font-size: 21px;
+  }
+  .poster-known-fees,
+  .poster-unknown-fees {
+    grid-column: 2;
+    grid-row: 2;
+    margin: 0;
+    font-size: 10px;
+  }
+  .poster-offer-link,
+  .poster-link-unavailable {
+    grid-column: 1/-1;
+    grid-row: 3;
+    margin-top: 10px;
+  }
+  .poster-ticket-details summary {
+    padding-inline: 18px;
+    font-size: 11px;
+  }
+  .poster-ticket-details dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-inline: 18px;
+  }
+  .poster-ticket-details > p {
+    padding-inline: 18px;
+  }
+  .poster-alternatives {
+    margin-top: 24px;
+  }
+  .poster-operator-roster {
+    padding: 16px 12px 12px;
+  }
+  .poster-operator-roster h2 {
+    font-size: 15px;
+  }
+  .poster-operator-roster ul {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .operator-chip > span:last-child {
+    font-size: 10px;
+  }
+  .poster-bottom-grid {
+    margin-top: 30px;
+  }
+  .poster-method {
+    gap: 20px;
+    padding: 22px;
+  }
+  .poster-method h2 {
+    font-size: 32px;
+  }
+  .poster-method-independence {
+    margin-top: 14px;
+  }
+  .poster-method-equation {
+    font-size: 24px;
+  }
+  .poster-method-equation span {
+    font-size: 15px;
+  }
+  .poster-method-content > p:not(.poster-method-equation) {
+    font-size: 14px;
+  }
+  .poster-method-details summary {
+    font-size: 13px;
+  }
+  .poster-discord {
+    padding: 22px;
+  }
+  .poster-discord h2 {
+    font-size: 32px;
+  }
+  .poster-discord-copy > p {
+    font-size: 15px;
+  }
+  .poster-footer > .poster-shell {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    padding: 22px;
+  }
+  .poster-footer-brand {
+    font-size: 24px;
+  }
+  .poster-footer-links {
+    gap: 13px;
+  }
+  .poster-footer-meta {
+    align-items: flex-start;
+    font-size: 10px;
+  }
+  .poster-state {
+    padding: 24px;
+  }
+  .poster-state h3 {
+    font-size: 27px;
+  }
+  .poster-state p {
+    font-size: 14px;
+  }
+}
+.poster-button:not(.poster-offer-link):active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--shadow-color);
+}
+@media (prefers-reduced-motion: reduce) {
+  .poster-site *,
+  .poster-site *::before,
+  .poster-site *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

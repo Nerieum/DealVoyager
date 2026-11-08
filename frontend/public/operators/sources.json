@@ -1,0 +1,105 @@
+{
+  "retrieved": "2026-11-08",
+  "assets": [
+    {
+      "slug": "free",
+      "file": "free.svg",
+      "source": "https://mobile.free.fr/"
+    },
+    {
+      "slug": "telecoop",
+      "file": "telecoop.svg",
+      "source": "https://telecoop.fr/"
+    },
+    {
+      "slug": "red",
+      "file": "red.svg",
+      "source": "https://static.s-sfr.fr/img/red.svg"
+    },
+    {
+      "slug": "sosh",
+      "file": "sosh.svg",
+      "source": "https://hpsosh.cdn.s.woopic.com/assets/favicon-2026.svg"
+    },
+    {
+      "slug": "coriolis",
+      "file": "coriolis.svg",
+      "source": "https://cdn.coriolistele.com/sources/coriolis/assets/images/coriolis-green-logo.svg"
+    },
+    {
+      "slug": "youprice",
+      "file": "youprice.svg",
+      "source": "https://www.youprice.fr/assets/img/logo.svg"
+    },
+    {
+      "slug": "prixtel",
+      "file": "prixtel.svg",
+      "source": "https://cdn.prixtel.com/sources/prixtel/images/assets/logo-prixtel.svg"
+    },
+    {
+      "slug": "nrj",
+      "file": "nrj.svg",
+      "source": "https://www.nrjmobile.fr/sites/default/files/2024-05/logo-nrj_0.svg"
+    },
+    {
+      "slug": "syma",
+      "file": "syma.svg",
+      "source": "https://www.symamobile.com/version-202105/images/logo_syma.svg?v=600e4befeb"
+    },
+    {
+      "slug": "lyca",
+      "file": "lyca.png",
+      "source": "https://cms-assets.ldsvcplatform.com/FR/s3fs-public/2026-08/LycaLOGo.png",
+      "bytes": 13531
+    },
+    {
+      "slug": "nordnet",
+      "file": "nordnet.svg",
+      "source": "https://www.nordnet.com/",
+      "bytes": 4933
+    },
+    {
+      "slug": "auchan",
+      "file": "auchan.svg",
+      "source": "https://www.auchantelecom.fr/themes/custom/maya/logo.svg"
+    },
+    {
+      "slug": "akeo",
+      "file": "akeo.svg",
+      "source": "https://image.akeo.fr/logos/akeotelecom/logo.svg"
+    },
+    {
+      "slug": "france",
+      "file": "france.png",
+      "source": "https://www.france-telephone.com/_next/image?url=%2Fbrand%2Flogo-france-telephone.png&w=256&q=75",
+      "bytes": 5294,
+      "resolvedSource": "https://www.france-telephone.com/_next/image?url=%2Fbrand%2Flogo-france-telephone.png&w=256&q=75"
+    },
+    {
+      "slug": "laposte",
+      "file": "laposte.svg",
+      "source": "https://medias.lapostemobile.fr/portail_mobile/img/logo-LPM-default.svg"
+    },
+    {
+      "slug": "cdiscount",
+      "file": "cdiscount.png",
+      "source": "https://www.corporate.bouyguestelecom.fr/wp-content/uploads/2024/10/Logo-Services.png",
+      "resolvedSource": "https://www.corporate.bouyguestelecom.fr/wp-content/uploads/2024/10/Logo-Services.png",
+      "bytes": 26368
+    },
+    {
+      "slug": "byou",
+      "file": "byou.png",
+      "source": "https://www.corporate.bouyguestelecom.fr/wp-content/uploads/2024/12/B-and-You_Les-Forfaits_Po.-1-300x206.png",
+      "resolvedSource": "https://www.corporate.bouyguestelecom.fr/wp-content/uploads/2024/12/B-and-You_Les-Forfaits_Po.-1-300x206.png",
+      "bytes": 11298
+    },
+    {
+      "slug": "lebara",
+      "file": "lebara.svg",
+      "source": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lebara_2026.svg",
+      "resolvedSource": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Lebara_2026.svg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",
+      "bytes": 4758
+    }
+  ]
+}

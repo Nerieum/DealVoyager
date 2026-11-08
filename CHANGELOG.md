@@ -2,6 +2,40 @@
 
 Toutes les modifications notables de ce projet sont documentées ici.
 
+## [2.4.0] - 2026-11-08
+
+### Refonte de l'interface publique
+
+- **Nouvelle identité visuelle** - Palette crème, jaune, rose et violet, titres façon affiche, cadres épais et ombres inspirés des mentions légales. Texture de fond et dessins dans les marges, sans recouvrir le contenu.
+- **Accueil réorganisé** - Navigation et titre réunis dans un même cadre, filtres à gauche sur ordinateur, offre en tête du classement suivie de trois alternatives et bouton pour afficher ou réduire les autres forfaits.
+- **Opérateurs identifiables** - Tous les opérateurs analysés restent visibles avec leur nom, leur logo et un repère de couleur, indépendamment des filtres. Logos redimensionnés sans découpe.
+- **Prix plus lisibles** - Prix mensuel et total sur 12 mois mis en avant, fonds colorés et boutons opérateur violets. Frais détaillés et ratio €/Go regroupés dans une zone dépliable ; frais inconnus et alertes tarifaires restent visibles.
+- **Bas de page remanié** - Méthode de calcul structurée, encart Discord violet avec aperçu des alertes et bouton d'invitation jaune, puis pied de page compact. Retrait des compteurs et de la date d'actualisation affichée.
+- **Affichage adaptatif** - Mise en page adaptée aux petits écrans, navigation au clavier et thèmes clair/sombre conservés. Les nouveaux styles restent limités aux pages publiques pour préserver l'administration.
+
+### Correctifs et transparence
+
+- **Filtres fiabilisés** - Le filtre réseau s'applique aussi à 0 Go. Le volume minimal peut être saisi directement au clavier entre 0 et 500 Go.
+- **Invitation Discord rétablie** - L'identifiant public du bot existant est utilisé par défaut lorsque la configuration locale ne le renseigne pas ; il reste configurable par environnement.
+- **Affiliation clarifiée** - Affichage « Aucun lien affilié » et maintien de la possibilité future dans les mentions légales : « Des liens d'affiliation pourront être proposés. »
+
+## [2.3.4] - 2026-11-05
+
+### Correctifs de collecte
+
+- **B&You** - L'ancienne page `/forfaits-mobiles/b-and-you` renvoie 404 : la collecte lit désormais `/forfaits-mobiles/sans-engagement`, en HTTP simple, à partir des mentions légales (prix, data, 4G/5G, data Europe, frais SIM/activation/résiliation). Playwright ne sert plus que de repli.
+- **Lebara** - Le catalogue étant rendu en JavaScript, les forfaits sont lus dans les données structurées schema.org (`Product`) présentes dans le HTML.
+- **France Téléphone** - Nouvelle URL `/forfaits-mobiles` et parseur adapté à la refonte (nom avant la data, cartes compactes).
+- **Pages supprimées** - Une réponse 404/410 échoue immédiatement avec `PAGE_INTROUVABLE_HTTP_…` au lieu de « Résultat incomplet : 0/N ».
+- **Blocages classés** - L'erreur Crawlee « Request blocked - received 403 » est comptée comme `blocked` et non plus `failed`.
+- **Mémoire Playwright** - Nouvelle variable `SCRAPER_BROWSER_MAX_CONCURRENCY` (2 par défaut), et Chromium est recyclé toutes les 6 pages.
+
+### Dépendances
+
+- **Playwright 1.64.1** - Version npm figée et image Docker `mcr.microsoft.com/playwright:v1.64.1-noble` alignée (la 1.65.0, publiée le jour même, est incomplète sur npm).
+- **Prisma 7.10.1** - `prisma`, `@prisma/client` et `@prisma/adapter-pg` alignés sur la même version.
+- **Mises à jour mineures** - Crawlee 3.18, discord.js 14.28, Express 5.3, axios, pg, undici, tsx ; côté frontend Nuxt 4.6, Vue 3.5.45, vue-router 5.4, Tailwind 4.3.4.
+
 ## [2.3.3] - 2026-07-12
 
 ### Correctifs de collecte
