@@ -2,6 +2,21 @@
 
 Toutes les modifications notables de ce projet sont documentées ici.
 
+## [2.4.1] - 2026-11-09
+
+### Publication des images Docker
+
+- **Tag `latest` rétabli** - Le workflow « Docker Image » publie de nouveau `latest` à chaque push sur `main`. Il n'était plus mis à jour depuis la désactivation automatique de l'ancien workflow « Docker » par GitHub, si bien qu'un serveur tirant `:latest` restait bloqué sur une ancienne version.
+- **Images versionnées** - Un tag Git `vX.Y.Z` déclenche désormais la construction et publie les images `X.Y.Z`.
+- **Builds sans conflit** - Un nouveau push annule le build encore en cours sur la même branche, et les caches backend et frontend sont séparés au lieu de s'écraser mutuellement.
+- **Workflow en double supprimé** - `docker-publish.yml`, désactivé par GitHub et qui publiait sous les mêmes noms d'images, est retiré.
+
+### Fiabilisation
+
+- **Tests dans la CI** - Les tests des parseurs de collecte (`npm test`) tournent maintenant à chaque push, sur Node 22 et 24.
+- **Artefacts de build retirés de Git** - Le dossier `frontend/.output`, déjà ignoré mais encore suivi, n'est plus versionné ; les images reconstruisent le frontend depuis les sources.
+- **Versions alignées** - Backend et frontend passent tous deux en `2.4.1` (le backend était resté en 2.3.4 et le frontend en 1.0.0).
+
 ## [2.4.0] - 2026-11-08
 
 ### Refonte de l'interface publique

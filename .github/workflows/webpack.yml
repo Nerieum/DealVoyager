@@ -25,9 +25,14 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Build Backend
         working-directory: ./backend
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
         run: |
           npm ci
           npm run build
+      - name: Tests des parseurs
+        working-directory: ./backend
+        run: npm test
 
   build-frontend:
     runs-on: ubuntu-latest
