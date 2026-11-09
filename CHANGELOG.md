@@ -2,6 +2,19 @@
 
 Toutes les modifications notables de ce projet sont documentées ici.
 
+## [2.4.2] - 2026-11-09
+
+### Publication des images Docker
+
+- **Signature et reconstruction hebdomadaire** - Les images sont de nouveau signées avec cosign et reconstruites chaque lundi à 5 h UTC pour intégrer les correctifs de sécurité des images de base. Ces deux fonctions de l'ancien workflow « Docker » avaient disparu avec lui en 2.4.1 ; elles sont reprises dans « Docker Image ».
+
+### Dépendances
+
+- **Playwright 1.65.0** - La version npm, désormais complète, est figée, et l'image Docker passe à `mcr.microsoft.com/playwright:v1.65.0-noble`.
+- **dotenv 18** - Aucun changement de code nécessaire ; le message de chargement passe sur la sortie d'erreur.
+- **Mises à jour mineures** - axios 1.21.1 ; côté frontend Tailwind CSS et `@tailwindcss/vite` 4.3.5.
+- **Prisma reste en 7.10.1** - La version 8 n'existe encore qu'en release candidate.
+
 ## [2.4.1] - 2026-11-09
 
 ### Publication des images Docker
